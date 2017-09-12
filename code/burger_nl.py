@@ -18,9 +18,11 @@ def main():
     ## phi = dependent variable, two time levels of it needed
     phi = f.initial_bell(x)
     phiNew = phi.copy()
+    phiOld = phi.copy()
     
-    p = f.FTBS(nt,nx,dt,dx,phi,phiNew)
-    return p
+    p_F = f.FTBS(x,u,t,nt,nx,dt,dx,phi,phiNew)
+    p_C = f.CTCS(x,u,t,nt,nx,dt,dx,phi,phiNew,phiOld)
+    return p_F, p_C
 
 if __name__=="__main__":
     main()

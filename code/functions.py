@@ -9,24 +9,46 @@ pi = np.pi
 def initial_bell(x):
     return np.where(x%1. <0.5, np.power(np.sin(2*x*pi),2), 0)
 
-def FTBS(nt,nx,dt,dx,phi,phiNew):
+def FTBS(x,u,t,nt,nx,dt,dx,p,pNew):
     """FTCS scheme for burgers equation """
-    ## Loop over all timestps using FTCS:
+    ## Loop over all timestps using FTBS:
     for n in xrange(nt):
         ## Loop over space
         for j in xrange(1,nx):
-    	    phiNew[j] = phi[j] - ((dt/dx)*phi[j])*(phi[j]-phi[j-1])
+    	    pNew[j] = p[j] - ((dt/dx)*p[j])*(p[j]-p[j-1])
         ## Setup boundary conditions
-        phiNew[0] = phi[0] - ((dt/dx)*phi[0])*(phi[0]-phi[nx-1])
-        phiNew[nx] = phiNew[0]
+        pNew[0] = p[0] - ((dt/dx)*p[0])*(p[0]-p[nx-1])
+        pNew[nx] = pNew[0]
 
-        phi = phiNew.copy()
-        plot_solution(phi)
+        p = pNew.copy()
+        plot_solution(x,p,u,t)
 
-    return phi
+    return p
+
+def CTCS(x,u,t,nt,nx,dt,dx,p,pNew,pOld):
+    """
+    CTCS scheme for burgers equation
+    """
+    ## First timestep using FTCS:
+    for j in xrange(1,nx):
+        pNew[j] = p[j] - (0.5*(dt/dx)*p[j])*(p[j+1] - p[j-1])
+    pNew[0] = p[0] - (0.5*(dt/dx)*p[0])*(p[1] - p[nx-1])
+    pNew[nx] = pNew[0]
+
+    ## Loop over all other timesteps with CTCS:
+    for n in xrange(nt):
+        for j in xrange(1,nx):
+            pNew[j] = pOld[j] - ((dt/dx)*p[j]*(p[j+1]-p[j-1]))
+        pNew[0] = pOld[0] - ((dt/dx)*p[0]*(p[1]-p[nx-1]))
+        pNew[nx] = pNew[0]
+        pOld = p.copy()
+        p = pNew.copy()
+        plot_solution(x,p,u,t)
+
+    return p
 
 
-def plot_solution(p):
+def plot_solution(x,p,u,t):
     """Function to plot the solution """
     plt.figure(1)
     #plt.clf()
@@ -37,6 +59,7 @@ def plot_solution(p):
     plt.xlabel('x')
     plt.ylabel('$\phi$')
     plt.axhline(0,linestyle=':',color='black')
-    plt.savefig(wkdir+'/plots/burgers.png')
+    #plt.savefig(wkdir+'/plots/burgers.png')
     plt.show()
     plt.pause(0.01)
+    
