@@ -21,7 +21,7 @@ def FTBS(x,u,t,nt,nx,dt,dx,p,pNew):
         pNew[nx] = pNew[0]
 
         p = pNew.copy()
-        plot_solution(x,p,u,t)
+        plot_solution(x,p,u,t,scheme='FTBS')
 
     return p
 
@@ -43,23 +43,25 @@ def CTCS(x,u,t,nt,nx,dt,dx,p,pNew,pOld):
         pNew[nx] = pNew[0]
         pOld = p.copy()
         p = pNew.copy()
-        plot_solution(x,p,u,t)
+        plot_solution(x,p,u,t,scheme='CTCS')
 
     return p
 
 
-def plot_solution(x,p,u,t):
+def plot_solution(x,p,u,t,scheme=None):
     """Function to plot the solution """
     plt.figure(1)
     #plt.clf()
     
-    plt.plot(x, initial_bell(x - u*t), 'k', label='analytics')
-    plt.plot(x, p, 'b', label='FTBS')
-    #plt.legend(loc='best')
+    if scheme=='FTBS':
+        plt.plot(x, p, 'b', label='FTBS')
+    elif scheme=='CTCS':
+        plt.plot(x, p, 'r', label='CTCS')
+    plt.legend(loc='best')
     plt.xlabel('x')
     plt.ylabel('$\phi$')
     plt.axhline(0,linestyle=':',color='black')
-    #plt.savefig(wkdir+'/plots/burgers.png')
+    plt.savefig(wkdir+'/plots/burgers_test.png')
     plt.show()
     plt.pause(0.01)
     
