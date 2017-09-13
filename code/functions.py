@@ -48,17 +48,6 @@ def CTCS(x,t,nt,nx,dt,dx,p,pNew,pOld):
         plot_solution(x,p,t,scheme='CTCS')
     return p
 
-def lax_wendroff(x,t,nt,nx,dt,dx,p,pNew):
-    """
-    Lax-Wendroff scheme. Second order, nonlinear conservation
-    """
-    for n in xrange(int(nt)):
-        for j in xrange(int(nx)):
-            a = (dt/(2*dx)) * (0.5*((p[j+1])**2) - 0.5*(p[j-1])**2 )
-            pNew[j] = p[j+1] - (dt/(2*dx))*(0.5*(p[j+1])**2 - 0.5*(p[j-1]**2)+(((dt**2)/(2*dx**2))*(0.5*(p[j]+p[j+1])*()))
-    ## NEEDS FINISHING!!!
-
-
 def plot_solution(x,p,t,scheme=None):
     """Function to plot the solution """
     plt.figure(1)
