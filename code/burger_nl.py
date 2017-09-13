@@ -4,30 +4,29 @@ import functions as f
 
 
 def main():
-    ## Setting up space and courant number c = u*(dt / dx)
-    nx = 40	   # Number of points in space
+    """
+    Function to solve the non-linear Burgers equation, u_t + uu_x = 0 (inviscid).
+    """
+    nx = 40.	   # Number of points in space
     x = np.linspace(0, 1, nx+1)	# spatial variable, with 41 points
-    nt = 40 	   # Number of timesteps
-    u = 1.
-    dx = 1./nx
-    dt = c*dx/u
-   
-    t = nt*dt
-    c = u*(dt/dx)
+    dx = 1. / nx
+    nt = 100. 	   # Number of timesteps
+    t = 1.
+    dt = t / nt
+
     
     ## phi = dependent variable, two time levels of it needed
-    phi = f.initial_bell(x)
-    phiNew = phi.copy()
-    phiOld = phi.copy()
+    u = f.initial_bell(x)
+    uNew = u.copy()
+    uOld = u.copy()
     
-    
-    p_F = f.FTBS(x,u,t,nt,nx,dt,dx,phi,phiNew)
-    p_C = f.CTCS(x,u,t,nt,nx,dt,dx,phi,phiNew,phiOld)
+    p_F = f.FTBS(x,t,100,nx,dt,dx,u,uNew)
+    #p_C = f.CTCS(x,t,nt,nx,dt,dx,u,uNew,uOld)
 
 
-    #f.plot_solution(x,p_F,u,t)
-    #f.plot_solution(x,p_C,u,t)
-    return p_F, p_C
+    #f.plot_solution(x,p_F,t,scheme='FTBS')
+    #f.plot_solution(x,p_C,t,scheme='CTCS')
+    return p_F
 
 if __name__=="__main__":
     main()
