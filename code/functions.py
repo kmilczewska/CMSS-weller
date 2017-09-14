@@ -22,7 +22,7 @@ def FTBS(x,t,nt,nx,dt,dx,p,pNew):
         pNew[0] = p[0] - ((dt/dx)*p[0])*(p[0]-p[int(nx)-1])
         pNew[int(nx)] = pNew[0]
         p = pNew.copy()
-        plot_solution(x,p,t,scheme='FTBS')
+        plot_solution(x,p,t,n,nt,scheme='FTBS')
     return p
 
 def CTCS(x,t,nt,nx,dt,dx,p,pNew,pOld):
@@ -31,13 +31,14 @@ def CTCS(x,t,nt,nx,dt,dx,p,pNew,pOld):
     """
     ## First timestep using FTCS:
     for j in xrange(1,int(nx)):
+        
         c = (dt/dx)*p[j]
         pNew[j] = p[j] - (0.5*c)*(p[j+1] - p[j-1])
     pNew[0] = p[0] - (0.5*(dt/dx)*p[0])*(p[1] - p[int(nx)-1])
-    pNew[nx] = pNew[0]
+    pNew[int(nx)] = pNew[0]
     p = pNew.copy()
     ## Loop over all other timesteps with CTCS:
-    for n in xrange(int(nt)):
+    for n in xrange(1,int(nt)):
         for j in xrange(1,int(nx)):
             c = (dt/dx)*p[j]
             pNew[j] = pOld[j] - (c*(p[j+1]-p[j-1]))
@@ -45,7 +46,7 @@ def CTCS(x,t,nt,nx,dt,dx,p,pNew,pOld):
         pNew[int(nx)] = pNew[0]
         pOld = p.copy()
         p = pNew.copy()
-        plot_solution(x,p,t,scheme='CTCS')
+        plot_solution(x,p,t,n,nt,scheme='CTCS')
     return p
 
 def lax_wendroff(x,t,nt,nx,dt,dx,p,pNew):
@@ -69,30 +70,33 @@ def lax_wendroff(x,t,nt,nx,dt,dx,p,pNew):
         pNew[int(nx)] = pNew[0]
         pOld = p.copy()
         p = pNew.copy()
-        plot_solution(x,p,t,scheme='Lax-Wendroff')
+        plot_solution(x,p,t,n,nt,scheme='Lax-Wendroff')
     return p
 
-def plot_solution(x,p,t,scheme=None):
+def plot_solution(x,p,t,n,nt,scheme=None):
     """Function to plot the solution """
     plt.figure(1)
-    plt.clf()
+    #plt.clf()
     
     if scheme=='FTBS':
         plt.plot(x, p, 'b', label='FTBS')
-        plt.legend(loc='best')
+        #plt.legend(loc='best')
         plt.ylim(ymax=1.0)
     elif scheme=='CTCS':
         plt.plot(x, p, 'r', label='CTCS')
-        plt.legend(loc='best')
-        plt.ylim(ymax=1.0)
+        #plt.legend(loc='best')
+        plt.ylim(ymax=3.0)
     elif scheme=='Lax-Wendroff':
         plt.plot(x, p, 'k--', label='Lax-Wendroff')
-        plt.ylim(ymax=3.0)
+        plt.ylim(ymax=2.0)
     #plt.legend(loc='best')
     plt.xlabel('x')
-    plt.ylabel('u')
+    plt.ylabel('$u(x,t)$')
     plt.axhline(0,linestyle=':',color='black')
-    plt.savefig(wkdir+'/plots/burgers_test_'+str(scheme)+'.png')
+    plt.title('t = %f' % (n))
+    plt.savefig(wkdir+'/plots/burgers_'+str(scheme)+'_'+'nt= %f .png' % (nt))
     plt.show()
     plt.pause(0.01)
+
+#def plots_sub(x,p,t
     
