@@ -20,7 +20,7 @@ def FTBS(x,t,nt,nx,dt,dx,p,pNew):
     	    pNew[j] = p[j] - (c*(p[j]-p[j-1]))
         ## Setup boundary conditions
         pNew[0] = p[0] - ((dt/dx)*p[0])*(p[0]-p[int(nx)-1])
-        pNew[nx] = pNew[0]
+        pNew[int(nx)] = pNew[0]
         p = pNew.copy()
         plot_solution(x,p,t,scheme='FTBS')
     return p
@@ -42,7 +42,7 @@ def CTCS(x,t,nt,nx,dt,dx,p,pNew,pOld):
             c = (dt/dx)*p[j]
             pNew[j] = pOld[j] - (c*(p[j+1]-p[j-1]))
         pNew[0] = pOld[0] - ((dt/dx)*p[0]*(p[1]-p[int(nx)-1]))
-        pNew[nx] = pNew[0]
+        pNew[int(nx)] = pNew[0]
         pOld = p.copy()
         p = pNew.copy()
         plot_solution(x,p,t,scheme='CTCS')
@@ -64,9 +64,9 @@ def lax_wendroff(x,t,nt,nx,dt,dx,p,pNew):
             #a = (0.5*((p[j+1])**2) - 0.5*(p[j-1])**2 )
             #b = 0.5*(p[j]+p[j+1])*(0.5*((p[j+1])**2) - 0.5*((p[j])**2)
             #c = 0.5*(p[j]+p[j-1])*(0.5*((p[j])**2) - 0.5*(p[j-1])**2)
-            pNew[j] = p[j+1] - (dt/(2*dx))*a(p,j) + ((dt**2)/(2*(dx**2)))*(b(p,j)-c(p,j))
-        pNew[0] = p[1] - (dt/(2*dx))*a(p,0) + ((dt**2)/(2*(dx**2)))*(b(p,0)-c(p,0))
-        pNew[nx] = pNew[0]
+            pNew[j] = p[j] - (dt/(2*dx))*a(p,j) + ((dt**2)/(2*(dx**2)))*(b(p,j)-c(p,j))
+        pNew[0] = p[0] - (dt/(2*dx))*a(p,0) + ((dt**2)/(2*(dx**2)))*(b(p,0)-c(p,0))
+        pNew[int(nx)] = pNew[0]
         pOld = p.copy()
         p = pNew.copy()
         plot_solution(x,p,t,scheme='Lax-Wendroff')
@@ -79,11 +79,15 @@ def plot_solution(x,p,t,scheme=None):
     
     if scheme=='FTBS':
         plt.plot(x, p, 'b', label='FTBS')
+        plt.legend(loc='best')
+        plt.ylim(ymax=1.0)
     elif scheme=='CTCS':
         plt.plot(x, p, 'r', label='CTCS')
+        plt.legend(loc='best')
+        plt.ylim(ymax=1.0)
     elif scheme=='Lax-Wendroff':
         plt.plot(x, p, 'k--', label='Lax-Wendroff')
-        plt.ylim(ymax=1.0)
+        plt.ylim(ymax=3.0)
     #plt.legend(loc='best')
     plt.xlabel('x')
     plt.ylabel('u')

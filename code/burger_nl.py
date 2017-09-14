@@ -27,9 +27,9 @@ def main():
     uOld = u.copy()
     
     ## Run schemes
-    p_F = f.FTBS(x,t,10,nx,dt,dx,u,uNew)
-    p_C = f.CTCS(x,t,10,nx,dt,dx,u,uNew,uOld)
-    p_LW = f.lax_wendroff(x,t,10,nx,dt,dx,u,uNew)
+    #p_F = f.FTBS(x,t,50,nx,dt,dx,u,uNew)
+    #p_C = f.CTCS(x,t,50,nx,dt,dx,u,uNew,uOld)
+    p_LW = f.lax_wendroff(x,t,300,nx,dt,dx,u,uNew)
 
 
     #f.plot_solution(x,p_F,t,scheme='FTBS')
