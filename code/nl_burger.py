@@ -6,21 +6,18 @@ pi = np.pi
 
 def main():
     ## Setting up space and courant number c = u*(dt / dx)
-    nx = 40	   # Number of points in space
-    c = 0.2	   # the Courant number
+    nx = 40.	   # Number of points in space
     x = np.linspace(0, 1, nx+1)	# spatial variable, with 41 points
-    nt = 40 	   # Number of timesteps
-    u = 1.
-    dx = 1./nx
-    dt = c*dx/u
+    dx = x / nx
+    nt = 40. 	   # Number of timesteps
+    t = 20.
+    dt = t / nt
+ 
+    ## u = dependent variable, two time levels of it needed
+    u = f.initial_bell(x)
+    uNew = u.copy()
     
-    t = nt*dt
-    
-    ## phi = dependent variable, two time levels of it needed
-    phi = f.initial_bell(x)
-    phiNew = phi.copy()
-    
-    p = f.FTBS(phi,phiNew)
+    p = f.FTBS(u,uNew)
     return p
 
 if __name__=="__main__":
