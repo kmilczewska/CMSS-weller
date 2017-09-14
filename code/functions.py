@@ -48,18 +48,45 @@ def CTCS(x,t,nt,nx,dt,dx,p,pNew,pOld):
         plot_solution(x,p,t,scheme='CTCS')
     return p
 
+def lax_wendroff(x,t,nt,nx,dt,dx,p,pNew):
+    """
+    Lax-Wendroff scheme. Second order, nonlinear conservation
+    """
+    def a(p,j):
+        return (0.5*((p[j+1])**2) - 0.5*(p[j-1])**2 )
+    def b(p,j):
+        return 0.5*(p[j]+p[j+1])*(0.5*((p[j+1])**2) - 0.5*((p[j])**2))
+    def c(p,j):
+        return 0.5*(p[j]+p[j-1])*(0.5*((p[j])**2) - 0.5*(p[j-1])**2)
+
+    for n in xrange(int(nt)):
+        for j in xrange(int(nx)):
+            #a = (0.5*((p[j+1])**2) - 0.5*(p[j-1])**2 )
+            #b = 0.5*(p[j]+p[j+1])*(0.5*((p[j+1])**2) - 0.5*((p[j])**2)
+            #c = 0.5*(p[j]+p[j-1])*(0.5*((p[j])**2) - 0.5*(p[j-1])**2)
+            pNew[j] = p[j+1] - (dt/(2*dx))*a(p,j) + ((dt**2)/(2*(dx**2)))*(b(p,j)-c(p,j))
+        pNew[0] = p[1] - (dt/(2*dx))*a(p,0) + ((dt**2)/(2*(dx**2)))*(b(p,0)-c(p,0))
+        pNew[nx] = pNew[0]
+        pOld = p.copy()
+        p = pNew.copy()
+        plot_solution(x,p,t,scheme='Lax-Wendroff')
+    return p
+
 def plot_solution(x,p,t,scheme=None):
     """Function to plot the solution """
     plt.figure(1)
-    #plt.clf()
+    plt.clf()
     
     if scheme=='FTBS':
         plt.plot(x, p, 'b', label='FTBS')
     elif scheme=='CTCS':
         plt.plot(x, p, 'r', label='CTCS')
-    plt.legend(loc='best')
+    elif scheme=='Lax-Wendroff':
+        plt.plot(x, p, 'k--', label='Lax-Wendroff')
+        plt.ylim(ymax=1.0)
+    #plt.legend(loc='best')
     plt.xlabel('x')
-    plt.ylabel('$\phi$')
+    plt.ylabel('u')
     plt.axhline(0,linestyle=':',color='black')
     plt.savefig(wkdir+'/plots/burgers_test_'+str(scheme)+'.png')
     plt.show()
